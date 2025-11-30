@@ -1,11 +1,14 @@
 // app/context/AuthContext.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import React, { ReactNode, createContext, useEffect, useState } from "react";
 
 type User = {
   id: string;
   name: string;
   email: string;
+  googleId?: string;
+  img?: string;
 };
 
 type AuthContextType = {
@@ -25,15 +28,18 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    // charger token et user depuis AsyncStorage au démarrage
     (async () => {
       const savedUser = await AsyncStorage.getItem("user");
       const savedToken = await AsyncStorage.getItem("token");
+
       if (savedUser && savedToken) {
         setUser(JSON.parse(savedUser));
         setToken(savedToken);
+      } else {
+        router.replace("/(auth)/login");
       }
     })();
   }, []);
@@ -46,10 +52,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    setUser(null);
-    setToken(null);
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("token");
+
+    setUser(null);
+    setToken(null);
+
+    // 🔥 remplace toute la stack → plus jamais de bouton retour
+    router.replace("/(auth)/login");
   };
 
   return (
@@ -58,3 +68,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;
