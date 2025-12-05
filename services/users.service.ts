@@ -1,6 +1,6 @@
 import api from "../api/api";
 
-const API_URL_ = `http://localhost:8000/user`;
+const API_URL_ = `http://192.168.0.102:8000/user`;
 
 export const loginUser = async (credentials: any) => {
   try {

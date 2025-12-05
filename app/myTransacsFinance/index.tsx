@@ -1,27 +1,11 @@
-
-import { fetchTransactions } from "@/services/financialTransaction.service";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useTransactions } from "../hooks/useTransactions";
 
 export default function FinanceScreen() {
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isLoading, data: transactions } = useTransactions();
 
-  useEffect(() => {
-    const loadTransactions = async () => {
-      try {
-        const res = await fetchTransactions(null, null, null); // pas de filtre pour l'instant
-        setTransactions(res.data || []);
-      } catch (error) {
-        console.error("Erreur lors du fetch des transactions", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadTransactions();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>Chargement...</Text>
@@ -31,14 +15,14 @@ export default function FinanceScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {transactions.length === 0 ? (
+      {!transactions || transactions.length === 0 ? (
         <Text style={styles.message}>Aucune transaction</Text>
       ) : (
-        transactions.map((t) => (
+        transactions.map((t: any) => (
           <View key={t._id} style={styles.transactionCard}>
             <Text style={styles.title}>{t.title}</Text>
             <Text style={styles.detail}>
-              {t.amount} € - {t.category} -{" "}
+              {t.amount} € — {t.category} —{" "}
               {new Date(t.date).toLocaleDateString()}
             </Text>
           </View>

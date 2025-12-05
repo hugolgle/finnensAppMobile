@@ -1,6 +1,8 @@
 import { View } from "@/components/Themed";
+import { useColorScheme } from "@/components/useColorScheme";
+import Colors from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link, Tabs, useRouter } from "expo-router";
 import React, { useContext, useEffect } from "react";
 import { Image, StyleSheet } from "react-native";
@@ -9,6 +11,7 @@ import { AuthContext } from "../context/AuthContext";
 export default function TabLayout() {
   const { user } = useContext(AuthContext);
   const router = useRouter();
+  const colorScheme = useColorScheme() ?? "light"; // valeur par défaut si null
 
   useEffect(() => {
     if (!user) {
@@ -19,10 +22,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme].tint,
         headerShown: true,
         headerLeft: () => {
           const avatarUrl = !user?.googleId
-            ? `http://localhost:8000${user?.img}`
+            ? `http://192.168.0.102:8000${user?.img}`
             : user?.img;
 
           return (
@@ -46,10 +50,10 @@ export default function TabLayout() {
         name="dashboard/index"
         options={{
           title: "Tableau de bord",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="view-dashboard-outline"
-              size={24}
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "grid" : "grid-outline"}
+              size={16}
               color={color}
             />
           ),
@@ -59,8 +63,12 @@ export default function TabLayout() {
         name="finance/index"
         options={{
           title: "Finance",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="finance" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "grid" : "grid-outline"}
+              size={16}
+              color={color}
+            />
           ),
         }}
       />

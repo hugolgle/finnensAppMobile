@@ -1,6 +1,6 @@
 import api from "../api/api";
 
-const API_URL_ = `http://localhost:8000/transactions`;
+const API_URL_ = `http://192.168.0.102:8000/transactions`;
 
 export const fetchTransactions = async (type: any, month: any, year: any) => {
   const params: any = {};
