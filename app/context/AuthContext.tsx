@@ -1,5 +1,6 @@
 // app/context/AuthContext.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { ReactNode, createContext, useEffect, useState } from "react";
 
@@ -14,18 +15,19 @@ type User = {
 type AuthContextType = {
   user: User | null;
   token: string | null;
-  login: (user: User, token: string) => void;
-  logout: () => void;
+  login: (user: User, token: string) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
-  login: () => {},
-  logout: () => {},
+  login: async () => {},
+  logout: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
@@ -58,7 +60,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setToken(null);
 
-    // 🔥 remplace toute la stack → plus jamais de bouton retour
+    // ❗ Nettoyage complet des données de l'app
+    queryClient.clear();
+
+    // Navigation propre
+    router.dismissAll();
     router.replace("/(auth)/login");
   };
 
@@ -68,5 +74,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
-export default AuthProvider;

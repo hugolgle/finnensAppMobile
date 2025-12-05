@@ -9,7 +9,6 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     await logout();
-    router.replace("/(auth)/login"); // supprime l'historique
   };
 
   return (

@@ -1,6 +1,6 @@
 import api from "../api/api";
 
-const API_URL_ = `http://localhost:8000/transactions`;
+const API_URL_ = `http://192.168.0.102:8000/transactions`;
 
 export const fetchTransactions = async (type: any, month: any, year: any) => {
   const params: any = {};
@@ -12,8 +12,7 @@ export const fetchTransactions = async (type: any, month: any, year: any) => {
 };
 
 export const addTransaction = async (transactionData: any) => {
-  const { title, category, date, detail, amount, type, tag, creditId } =
-    transactionData;
+  const { title, category, date, detail, amount, type, tag } = transactionData;
 
   const newTransaction = {
     title,
@@ -23,7 +22,6 @@ export const addTransaction = async (transactionData: any) => {
     amount,
     type,
     tag: tag || [],
-    creditId,
   };
 
   return await api.post(`${API_URL_}`, newTransaction);
